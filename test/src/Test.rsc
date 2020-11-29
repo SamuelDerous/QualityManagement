@@ -13,6 +13,7 @@ import vis::Figure;
 import vis::Render;
 import vis::KeySym;
 
+
 public void exercises9C() {
 	set[Declaration] asts = 
 		createAstsFromFiles({|project://Jabberpoint-le3/src/XMLAccessor.java|}, false);
@@ -29,7 +30,6 @@ public void exercises9C() {
 public void exercise9C() {
 	Resource jabber = getProject(|project://Jabberpoint-le3/|);
 	rel[int, value] methods = {};
-	rel[int, value] ifs = {};
 	rel[str, value] methodNames = {};
 	visit(jabber) {
 		case file(l):
@@ -47,16 +47,11 @@ public void exercise9C() {
 						numMethods += 1;
 						methodNames += {<name, impl>};
 					}
-					//case \if(_,_): numIfs += 1;
-					//case \if(_,_,_): numIfs += 1;
 				}
 				methods += {<numMethods, l>};
-				//ifs += {<numIfs, l>};
 			}
 	}
-	//println(methods);
 	lrel[int, value] methodsSorted = sort(methods);
-	
 	for(int i <- [0 .. size(methodsSorted)]) {
 		println(methodsSorted[i]);
 	}
@@ -74,27 +69,20 @@ public void exercises10() {
 }
 
 public void exercise10b() {
-	/*b0 = box(size(40), fillColor("red"), resizable(false),
-	onMouseDown(bool (int nummer, map[KeyModifier,bool] modifiers) {
-		b0 = box(size(40), fillColor("green"), resizable(false));
-		return true;
-		}));
-	render(b0);*/
 	s = "";
-s2 = "";
-b = box(size(40), fillColor("red"), resizable(false), 
-	onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
-		render(b2);
-		return true;
-	}));
-	
-b2 = ellipse(size(40), fillColor("green"), resizable(false),
+	s2 = "";
+	b = box(size(40), fillColor("red"), resizable(false), 
 		onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
-		//b2 = b1;
-		render(b);
-		return true;
-	}));
-render(b);
+			render(b2);
+			return true;
+		}));
+	
+	b2 = ellipse(size(40), fillColor("green"), resizable(false),
+		onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) {
+			render(b);
+			return true;
+		}));
+	render(b);
 }
 
 public void exercise10c() {
@@ -107,11 +95,10 @@ public void exercise10c() {
 		"XMLAccessor":112);
 	t = treemap([box(text(filename),area(no), fillColor(arbColor())) | <filename,no> <-
 		toRel(jabberSizes) ]);
-
-	     
 	render(t);
 }
 
+// copied from solution
 public int telIfs(Statement d) {
 	int count = 0;
 	visit(d) {
@@ -121,15 +108,13 @@ public int telIfs(Statement d) {
 	return count;
 }
 
-
+// copied from solution
 public bool aflopend(tuple[&a, num] x, tuple[&a, num] y) {
 return x[1] > y[1];
 }
 
 public void exercise9D() {
 	loc project = |project://Jabberpoint-le3/|;
-	Resource jabber = getProject(|project://Jabberpoint-le3/|);
-	set[loc] bestanden = { l | /file(l) <- jabber, l.extension == "java"};
 	M3 model = createM3FromEclipseProject(project);
 	subklassen = invert(model.extends);
 	telKinderen = { <a, size((subklassen+)[a])> | a <-
@@ -158,7 +143,6 @@ public void exercises9A() {
 				javaF += {<l,javalines>};
 				javaFInt += {<javalines, l>};
 			}
-			
 	}
 	lrel[value, int] testRel = sort(javaF);
 	lrel[int, value] testRelInt = sort(javaFInt);
@@ -178,7 +162,6 @@ public rel[int, int] delers(int getal) {
 
 public list[set[int]] delersSet(int getal) {
 	list[set[int]] testGetal;
-	
 	for(int i <- [1 .. getal + 1]) {
 		set[int] op = ({n | int n <- [1 .. getal + 1], i % n == 0});
 		if (i == 1) { // needed to instantiate the list;
@@ -196,7 +179,6 @@ public list[int] maxDivisors(int getal) {
 	list[int] maxDivisors = [0];
 	int sizeList = size(divisorsPerGetal);
 	for(int i <- [0 .. sizeList]) {
-		//println("<i> : <size(divisorsPerGetal[i])>: <divisorsPerGetal[i]>");
 		if(size(divisorsPerGetal[i]) > max) {
 			max = size(divisorsPerGetal[i]);
 			maxDivisors = [(i + 1)];
@@ -205,7 +187,6 @@ public list[int] maxDivisors(int getal) {
 		}
 	}
 	return maxDivisors;
-	
 }
 
 public void primeNumbers() {
@@ -235,7 +216,6 @@ public void exercises8() {
 public void exercise5() {
 	println("Hello");
 	list[str] eu=["Austria", "Belgium", "Bulgaria", "Czech Republic","Cyprus", "Denmark", "Estonia", "Finland", "France", "Germany","Greece", "Hungary", "Ireland", "Italy", "Latvia", "Lithuania","Luxembourg", "Malta", "The Netherlands", "Poland","Portugal", "Romania", "Slovenia", "Slovakia", "Spain","Sweden", "United Kingdom"];
-	//println(eu);
 	println("Oefening 6A");
 	println({s | s <- eu, /s/i := s});
 	println("Oefening 6B");
@@ -255,6 +235,5 @@ public void exercise5() {
 	// Compute the relationship between the natural numbers up to 100 and their divisors.
 	// Optionally make the upper limit a paramater
 	println(delers(4));
-	
 }
 
