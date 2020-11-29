@@ -14,19 +14,147 @@ import vis::Render;
 import vis::KeySym;
 
 
-public void exercises9C() {
-	set[Declaration] asts = 
-		createAstsFromFiles({|project://Jabberpoint-le3/src/XMLAccessor.java|}, false);
-	int numLoops = 0;
-	
-	visit(asts) {
-		case \for(_,_,_): numLoops=numLoops+1;
-		case \for(_,_,_,_): numLoops=numLoops+1;
-		case \foreach(_,_,_): numLoops=numLoops+1;
+// copied from solution
+public int telIfs(Statement d) {
+	int count = 0;
+	visit(d) {
+		case \if(_,_): count=count+1;
+		case \if(_,_,_): count=count+1;
 	}
-	println("<numLoops> for loops");
+	return count;
 }
 
+// copied from solution
+public bool aflopend(tuple[&a, num] x, tuple[&a, num] y) {
+return x[1] > y[1];
+}
+
+
+// this is from the solution
+public rel[int, int] delers(int getal) {
+		return { <n, i> | int n <- [1 .. getal], int i <- [1 .. n+1], n % i == 0};	
+}
+
+// this is my own implementation
+public list[set[int]] delersSet(int getal) {
+	list[set[int]] testGetal;
+	for(int i <- [1 .. getal + 1]) {
+		set[int] op = ({n | int n <- [1 .. getal + 1], i % n == 0});
+		if (i == 1) { // needed to instantiate the list;
+			testGetal = [op];
+	 	} else {
+			testGetal += op; // if instantiated just add a new set
+		}
+	}
+	return testGetal;
+}
+
+public list[int] maxDivisors(int getal) {
+	list[set[int]] divisorsPerGetal = delersSet(getal);
+	int max = 0;
+	list[int] maxDivisors = [0];
+	int sizeList = size(divisorsPerGetal);
+	for(int i <- [0 .. sizeList]) {
+		if(size(divisorsPerGetal[i]) > max) {
+			max = size(divisorsPerGetal[i]);
+			maxDivisors = [(i + 1)];
+		} else if (size(divisorsPerGetal[i]) == max) {
+			maxDivisors += i + 1;
+		}
+	}
+	return maxDivisors;
+}
+
+public void primeNumbers(int getal) {
+		list[set[int]] divisorsPerGetal = delersSet(getal);
+		int sizeList = size(divisorsPerGetal);
+		for(int i <- [0 .. sizeList]) {
+			if(size(divisorsPerGetal[i]) <= 2) {
+				println(i + 1);
+			}
+		}
+}
+
+ public Graph[str] component = {<"A", "B">, <"A", "D">, <"B", "D">, <"B","E">, <"C", "B">, <"C", "E">, <"C", "F">,
+ 		<"E", "D">, <"E", "F">};
+
+// I had to peak to the solutions a lot for this one
+public void exercise6() {
+	println("Hello");
+	list[str] eu=["Austria", "Belgium", "Bulgaria", "Czech Republic","Cyprus", "Denmark", "Estonia", "Finland", "France", "Germany","Greece", "Hungary", "Ireland", "Italy", "Latvia", "Lithuania","Luxembourg", "Malta", "The Netherlands", "Poland","Portugal", "Romania", "Slovenia", "Slovakia", "Spain","Sweden", "United Kingdom"];
+	println("Oefening 6A");
+	println({s | s <- eu, /s/i := s});
+	println("Oefening 6B");
+	println({s | s <- eu, /e.*e/i := s});
+	println("Oefening 6C");
+	println({s | s <- eu, /^([^e]*e){2}[^e]*$/i := s});
+	println("Oefening 6D");
+	//the name contains no n and also no e
+	println({s | s <- eu, /^[^ne]*$/i := s});
+	println("Oefening 6E");
+	// the name contains any letter at least twice
+	println({s | s <- eu, /<x:[a-z]>.*<x>/i := s});
+	println("Oefening 6F");
+	// change the first a in an o
+	println({begin+"o"+end | a <- eu, /^<begin:[^a]*>a<end:.*>$/i := a});
+	println("Oefening 7A");
+	// Compute the relationship between the natural numbers up to 100 and their divisors.
+	// Optionally make the upper limit a paramater
+	println(delers(4));
+}
+
+public void exercise7() {
+	// oefening 7a
+	println(delers(100));
+	// oefening 7b
+	println(maxDevisors(100));
+	// oefening 7c
+	println(primenumbers(100));
+}
+
+public void exercise8() {
+	// oefening 8a
+	println(carrier(component));
+	// Oefening 8b
+	println(size(carrier(component)));
+	// oefening 8c
+	println(top(component));
+	// oefening 8d
+	println(successors(component, "A"));
+	// oefening 8e
+	println((carrier(component)) - (component*)["C"]);
+	// oefening 8f
+	println((comp:size(component[comp]) | comp <- carrier(component)));
+}
+
+// oefening 9a en 9b
+public void exercises9A() {
+	Resource jabber = getProject(|project://Jabberpoint-le3/|);
+	int javaFiles = 0;
+	rel[value, int] javaF = {};
+	rel[int, value] javaFInt = {};
+	visit(jabber) {
+		case file(l):
+			if (l.extension == "java") {
+				javaFiles += 1; // exercise a
+				int javalines = size(readFileLines(l)); 
+				javaF += {<l,javalines>};
+				javaFInt += {<javalines, l>};
+			}
+	}
+	lrel[value, int] testRel = sort(javaF);
+	lrel[int, value] testRelInt = sort(javaFInt);
+	for(int i <- [0 .. size(testRel)]) {
+		println(testRel[i]);
+	}
+	println();
+	for(int i <- [0 .. size(testRelInt)]) {
+		println(testRelInt[i]);
+	}
+	println("Total of java Files: <javaFiles>");
+}
+
+// oefening 9c en 9e
 public void exercise9C() {
 	Resource jabber = getProject(|project://Jabberpoint-le3/|);
 	rel[int, value] methods = {};
@@ -60,6 +188,18 @@ public void exercise9C() {
 	println(aantalIfs);
 }
 
+// oefening 9d
+public void exercise9D() {
+	loc project = |project://Jabberpoint-le3/|;
+	M3 model = createM3FromEclipseProject(project);
+	subklassen = invert(model.extends);
+	telKinderen = { <a, size((subklassen+)[a])> | a <-
+	domain(subklassen) };
+	for (<a, n> <- sort(telKinderen, aflopend))
+		println("<a>: <n> subklassen");
+}	 				
+
+// oefening 10a
 public void exercises10() {
 	list[Figure] figures = [];
 	for(int i <- [0 .. 10]) {
@@ -68,6 +208,7 @@ public void exercises10() {
 	render(hcat(figures, gap(5)));
 }
 
+// oefening 10b
 public void exercise10b() {
 	s = "";
 	s2 = "";
@@ -85,6 +226,7 @@ public void exercise10b() {
 	render(b);
 }
 
+oefening 10c
 public void exercise10c() {
 	map[str, int] jabberSizes =
 		("AboutBox.java":28, "Accessor":30, "BitmapItem":67,
@@ -98,142 +240,19 @@ public void exercise10c() {
 	render(t);
 }
 
-// copied from solution
-public int telIfs(Statement d) {
-	int count = 0;
-	visit(d) {
-		case \if(_,_): count=count+1;
-		case \if(_,_,_): count=count+1;
+// this is not needed; probably a test
+public void exercises9C() {
+	set[Declaration] asts = 
+		createAstsFromFiles({|project://Jabberpoint-le3/src/XMLAccessor.java|}, false);
+	int numLoops = 0;
+	
+	visit(asts) {
+		case \for(_,_,_): numLoops=numLoops+1;
+		case \for(_,_,_,_): numLoops=numLoops+1;
+		case \foreach(_,_,_): numLoops=numLoops+1;
 	}
-	return count;
+	println("<numLoops> for loops");
 }
 
-// copied from solution
-public bool aflopend(tuple[&a, num] x, tuple[&a, num] y) {
-return x[1] > y[1];
-}
 
-public void exercise9D() {
-	loc project = |project://Jabberpoint-le3/|;
-	M3 model = createM3FromEclipseProject(project);
-	subklassen = invert(model.extends);
-	telKinderen = { <a, size((subklassen+)[a])> | a <-
-	domain(subklassen) };
-	for (<a, n> <- sort(telKinderen, aflopend))
-		println("<a>: <n> subklassen");
-}	 				
-
-public void exercises9B() {
-	M3 model = createM3FromEclipseProject(|project://Jabberpoint-le3/|);
-	for(<a,b> <- model.extends) {
-		println("<a> extends <b>");
-	}
-}
-
-public void exercises9A() {
-	Resource jabber = getProject(|project://Jabberpoint-le3/|);
-	int javaFiles = 0;
-	rel[value, int] javaF = {};
-	rel[int, value] javaFInt = {};
-	visit(jabber) {
-		case file(l):
-			if (l.extension == "java") {
-				javaFiles += 1; // exercise a
-				int javalines = size(readFileLines(l)); 
-				javaF += {<l,javalines>};
-				javaFInt += {<javalines, l>};
-			}
-	}
-	lrel[value, int] testRel = sort(javaF);
-	lrel[int, value] testRelInt = sort(javaFInt);
-	for(int i <- [0 .. size(testRel)]) {
-		println(testRel[i]);
-	}
-	println();
-	for(int i <- [0 .. size(testRelInt)]) {
-		println(testRelInt[i]);
-	}
-	println("Total of java Files: <javaFiles>");
-}
-
-public rel[int, int] delers(int getal) {
-		return { <n, i> | int n <- [1 .. getal], int i <- [1 .. n+1], n % i == 0};	
-}
-
-public list[set[int]] delersSet(int getal) {
-	list[set[int]] testGetal;
-	for(int i <- [1 .. getal + 1]) {
-		set[int] op = ({n | int n <- [1 .. getal + 1], i % n == 0});
-		if (i == 1) { // needed to instantiate the list;
-			testGetal = [op];
-	 	} else {
-			testGetal += op; // if instantiated just add a new set
-		}
-	}
-	return testGetal;
-}
-
-public list[int] maxDivisors(int getal) {
-	list[set[int]] divisorsPerGetal = delersSet(getal);
-	int max = 0;
-	list[int] maxDivisors = [0];
-	int sizeList = size(divisorsPerGetal);
-	for(int i <- [0 .. sizeList]) {
-		if(size(divisorsPerGetal[i]) > max) {
-			max = size(divisorsPerGetal[i]);
-			maxDivisors = [(i + 1)];
-		} else if (size(divisorsPerGetal[i]) == max) {
-			maxDivisors += i + 1;
-		}
-	}
-	return maxDivisors;
-}
-
-public void primeNumbers() {
-		list[set[int]] divisorsPerGetal = delersSet(100);
-		int sizeList = size(divisorsPerGetal);
-		for(int i <- [0 .. sizeList]) {
-			if(size(divisorsPerGetal[i]) <= 2) {
-				println(i + 1);
-			}
-		}
-}
-
- public Graph[str] component = {<"A", "B">, <"A", "D">, <"B", "D">, <"B","E">, <"C", "B">, <"C", "E">, <"C", "F">,
- 		<"E", "D">, <"E", "F">};
-
-public void exercises8() {
-	println(carrier(component));
-	println("8A");
-	println(size(carrier(component)));
-	println(size(component));
-	println(top(component));
-	println(successors(component, "A"));
-	println((carrier(component)) - (component*)["C"]);
-	println((comp:size(component[comp]) | comp <- carrier(component)));
-}
-
-public void exercise5() {
-	println("Hello");
-	list[str] eu=["Austria", "Belgium", "Bulgaria", "Czech Republic","Cyprus", "Denmark", "Estonia", "Finland", "France", "Germany","Greece", "Hungary", "Ireland", "Italy", "Latvia", "Lithuania","Luxembourg", "Malta", "The Netherlands", "Poland","Portugal", "Romania", "Slovenia", "Slovakia", "Spain","Sweden", "United Kingdom"];
-	println("Oefening 6A");
-	println({s | s <- eu, /s/i := s});
-	println("Oefening 6B");
-	println({s | s <- eu, /e.*e/i := s});
-	println("Oefening 6C");
-	println({s | s <- eu, /^([^e]*e){2}[^e]*$/i := s});
-	println("Oefening 6D");
-	//the name contains no n and also no e
-	println({s | s <- eu, /^[^ne]*$/i := s});
-	println("Oefening 6E");
-	// the name contains any letter at least twice
-	println({s | s <- eu, /<x:[a-z]>.*<x>/i := s});
-	println("Oefening 6F");
-	// change the first a in an o
-	println({begin+"o"+end | a <- eu, /^<begin:[^a]*>a<end:.*>$/i := a});
-	println("Oefening 7A");
-	// Compute the relationship between the natural numbers up to 100 and their divisors.
-	// Optionally make the upper limit a paramater
-	println(delers(4));
-}
 
