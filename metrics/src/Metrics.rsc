@@ -27,10 +27,13 @@ public void metrics() {
 	real totaalAantalLinesInUnits = 0.0;
 	stats = getMethods(project);
 	real difficulties = 0.0;
-	difficulty = [telIterations(s) + telLoops(s) + telExceptions(s) | <name, s> <- stats];
+	difficulty = [telIterations(s) + telLoops(s) | <name, s> <- stats];
 	amountOfAsserts = [countAsserts(s) | <name, s> <- stats];
 	for(int i <- difficulty) {
 		difficulties += i;
+	}
+	if(difficulties > 1) {
+		difficulties += 1;
 	}
 	asserts = 0;
 	for(int i <- amountOfAsserts) {
