@@ -21,6 +21,7 @@ import computation::Volume;
 
 public void metrics() {
 	loc project = |project://smallsql|;
+	loc result = |project://metrics/resultHsqldb.txt|;
 	set[loc] bestanden = model1(project);
 	set[loc] testBestanden = testModel(project);
 	M3 model = createM3FromEclipseProject(project);
@@ -52,9 +53,9 @@ public void metrics() {
       locs += b;
     }
     
-    tuple[real moderate, real complex, real difficult] amounts = computeComplexityPerUnit(project);
+    tuple[real simple, real moderate, real complex, real difficult] amounts = computeComplexityPerUnit(project);
     str compl = complexityScore(amounts.moderate, amounts.complex, amounts.difficult);
-    tuple[real moderate, real complex, real difficult] sizePerUnit = computeUnitSize(project);
+    tuple[real simple, real moderate, real complex, real difficult] sizePerUnit = computeUnitSize(project);
     str unitSize = complexityScore(sizePerUnit.moderate, sizePerUnit.complex, sizePerUnit.difficult);
     real testPerc = testReport();
     str testCoverage = testcoverage(testPerc);
@@ -64,12 +65,25 @@ public void metrics() {
     str testScore = testability (compl, unitSize, testCoverage);
     str analyseScore = analysability(volScore, dupScore, unitSize, testScore);
     str changeScore = changeability(compl, dupScore);
-    str maintainScore = "--"; //analysability(analyseScore, changeScore, testScore);
+    str maintainScore = testability(analyseScore, changeScore, testScore);
     
+    println("<project.authority>");
+    println("----\n");
     println("lines of code: <locs>");
     println("Number of units: <size(methodenList)>");
-    println("average unit size: <precision(totaalAantalLinesInUnits / size(methodenList), 5)>");
-    println("average unit complexity: <precision(complexity, 5)>");
+    //println("average unit size: <precision(totaalAantalLinesInUnits / size(methodenList), 5)>");
+    //println("average unit complexity: <precision(complexity, 5)>");
+    println("unit size:");
+    println("   * simple: <precision(sizePerUnit.simple, 5)>%");
+    println("   * moderate: <precision(sizePerUnit.moderate, 5)>%");
+    println("   * high: <precision(sizePerUnit.complex, 5)>%");
+    println("   * very  high: <precision(sizePerUnit.difficult, 5)>%");
+    println("Unit complexity:");
+    println("   * simple: <precision(amounts.simple, 5)>%");
+    println("   * moderate: <precision(amounts.moderate, 5)>%");
+    println("   * high: <precision(amounts.complex, 5)>%");
+    println("   * very  high: <precision(amounts.difficult, 5)>%");
+    
     println("duplication: <precision(duplicationLines, 4)>%\n");
     println("Testcoverage: <precision(testPerc, 5)> %");
     println("Amount of asserts: <asserts>");
@@ -81,9 +95,28 @@ public void metrics() {
     println("analysability score: <analyseScore>");
     println("changability score: <changeScore>");
     println("testability score: <testScore>\n");
-    println("Overall maintainability score: <maintainScore>");
+    println("Overall maintainability score: <maintainScore>\n");
+    //println("write to file...");
     
-    
+    /*writeFile(result, "<project.authority>\n");
+    appendToFile(result, "----\n\n");
+    appendToFile(result, "lines of code: <locs>\n");
+    appendToFile(result, "Number of units: <size(methodenList)>\n");
+    appendToFile(result, "average unit size: <precision(totaalAantalLinesInUnits / size(methodenList), 5)>\n");
+    appendToFile(result, "average unit complexity: <precision(complexity, 5)>\n");
+    appendToFile(result, "duplication: <precision(duplicationLines, 4)>%\n\n");
+    //appendToFile(result, "Testcoverage: <precision(testPerc, 5)> %\n");
+    //appendToFile(result, "Amount of asserts: <asserts>\n");
+    //appendToFile(result, "Assert Density: <precision(computeAssertDensity(asserts, countTestLines(project)), 5)>%\n\n");
+    appendToFile(result, "Volume score: <volScore>\n");
+    appendToFile(result, "Unit size score: <unitSize>\n");
+    appendToFile(result, "Unit complexity score: <compl>\n");
+    appendToFile(result, "Duplication score: <dupScore>\n\n");
+    appendToFile(result, "analysability score: <analyseScore>\n");
+    appendToFile(result, "changability score: <changeScore>\n");
+    appendToFile(result, "testability score: <testScore>\n\n");
+    appendToFile(result, "Overall maintainability score: <maintainScore>\n\n");*/
+   
 }
 
 
