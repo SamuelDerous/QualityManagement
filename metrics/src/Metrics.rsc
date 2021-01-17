@@ -21,7 +21,7 @@ import computation::Volume;
 
 public void metrics() {
 	loc project = |project://smallsql|;
-	loc result = |project://metrics/resultHsqldb.txt|;
+	loc result = |project://metrics/resultSmallsql.txt|;
 	set[loc] bestanden = model1(project);
 	set[loc] testBestanden = testModel(project);
 	M3 model = createM3FromEclipseProject(project);
@@ -45,7 +45,6 @@ public void metrics() {
 	}
 	totaalAantalLinesInUnits -= blankLinesInUnit;
 	real duplicationLines = duplication(project);
-	//println(difficulty);
 	int commentsOrBlankLines = countCommentsOrBlankLines(bestanden);
 	int locs = 0;
 	map[loc, int] regels = (l:size(readFileLines(l)) | l <- bestanden );
@@ -96,14 +95,24 @@ public void metrics() {
     println("changability score: <changeScore>");
     println("testability score: <testScore>\n");
     println("Overall maintainability score: <maintainScore>\n");
-    //println("write to file...");
+    println("write to file...");
     
-    /*writeFile(result, "<project.authority>\n");
+    writeFile(result, "<project.authority>\n");
     appendToFile(result, "----\n\n");
     appendToFile(result, "lines of code: <locs>\n");
     appendToFile(result, "Number of units: <size(methodenList)>\n");
-    appendToFile(result, "average unit size: <precision(totaalAantalLinesInUnits / size(methodenList), 5)>\n");
-    appendToFile(result, "average unit complexity: <precision(complexity, 5)>\n");
+    //appendToFile(result, "average unit size: <precision(totaalAantalLinesInUnits / size(methodenList), 5)>\n");
+    //appendToFile(result, "average unit complexity: <precision(complexity, 5)>\n");
+    appendToFile(result, "unit size:\n");
+    appendToFile(result, "   * simple: <precision(sizePerUnit.simple, 5)>%\n");
+    appendToFile(result, "   * moderate: <precision(sizePerUnit.moderate, 5)>%\n");
+    appendToFile(result, "   * high: <precision(sizePerUnit.complex, 5)>%\n");
+    appendToFile(result, "   * very  high: <precision(sizePerUnit.difficult, 5)>%\n");
+    appendToFile(result, "Unit complexity:\n");
+    appendToFile(result, "   * simple: <precision(amounts.simple, 5)>%\n");
+    appendToFile(result, "   * moderate: <precision(amounts.moderate, 5)>%\n");
+    appendToFile(result, "   * high: <precision(amounts.complex, 5)>%\n");
+    appendToFile(result, "   * very  high: <precision(amounts.difficult, 5)>%\n");
     appendToFile(result, "duplication: <precision(duplicationLines, 4)>%\n\n");
     //appendToFile(result, "Testcoverage: <precision(testPerc, 5)> %\n");
     //appendToFile(result, "Amount of asserts: <asserts>\n");
@@ -115,9 +124,5 @@ public void metrics() {
     appendToFile(result, "analysability score: <analyseScore>\n");
     appendToFile(result, "changability score: <changeScore>\n");
     appendToFile(result, "testability score: <testScore>\n\n");
-    appendToFile(result, "Overall maintainability score: <maintainScore>\n\n");*/
-   
+    appendToFile(result, "Overall maintainability score: <maintainScore>\n\n");  
 }
-
-
-
