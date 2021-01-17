@@ -20,8 +20,9 @@ import computation::Testing;
 import computation::Volume;
 
 public void metrics() {
-	loc project = |project://smallsql|;
-	loc result = |project://metrics/resultSmallsql.txt|;
+	loc project = |project://hsqldb|;
+	loc result = |project://metrics/resultHsqldb.txt|;
+	loc reportFile = |project://hsqldb/report/coverage.xml|;
 	set[loc] bestanden = model1(project);
 	set[loc] testBestanden = testModel(project);
 	M3 model = createM3FromEclipseProject(project);
@@ -56,7 +57,7 @@ public void metrics() {
     str compl = complexityScore(amounts.moderate, amounts.complex, amounts.difficult);
     tuple[real simple, real moderate, real complex, real difficult] sizePerUnit = computeUnitSize(project);
     str unitSize = complexityScore(sizePerUnit.moderate, sizePerUnit.complex, sizePerUnit.difficult);
-    real testPerc = testReport();
+    real testPerc = testReport(reportFile);
     str testCoverage = testcoverage(testPerc);
     locs = locs - commentsOrBlankLines;
     str volScore = volumeScore(locs);
