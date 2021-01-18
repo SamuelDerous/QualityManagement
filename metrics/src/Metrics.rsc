@@ -11,7 +11,7 @@ import analysis::m3::Core;
 import lang::java::m3::AST;
 import lang::java::jdt::m3::Core;
 
-import extraction::Extraction;
+import extraction::Extraction; 
 import extraction::TestabilityReport;
 import computation::Complexity;
 import computation::Duplication;
@@ -20,9 +20,9 @@ import computation::Testing;
 import computation::Volume;
 
 public void metrics() {
-	loc project = |project://hsqldb|;
-	loc result = |project://metrics/resultHsqldb.txt|;
-	loc reportFile = |project://hsqldb/report/coverage.xml|;
+	loc project = |project://smallsql|;
+	loc result = |project://metrics/resultSmallsql.txt|;
+	loc reportFile = |project://smallsql/report/coverage.xml|;
 	set[loc] bestanden = model1(project);
 	set[loc] testBestanden = testModel(project);
 	M3 model = createM3FromEclipseProject(project);
@@ -36,10 +36,6 @@ public void metrics() {
 	for(int i <- difficulty) {
 		difficulties += i;
 	}
-	if(difficulties > 1) {
-		difficulties += 1;
-	}
-	
 	complexity = difficulties / size(stats);
 	for(k <- methodenList) {
 		totaalAantalLinesInUnits += size(readFileLines(k));
